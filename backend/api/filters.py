@@ -48,7 +48,7 @@ class TagsFilter(filter.FilterSet):
     def get_is_in_shopping_cart(self, queryset, name, value):
         """
         Метод `get_is_in_shopping_cart` для фильтрации рецептов
-        спсика покупок.
+        спиcка покупок.
         """
         if value:
             return queryset.filter(shoppingcartrecipe__user=self.request.user)

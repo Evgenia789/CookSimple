@@ -1,13 +1,19 @@
 import webcolors
+from django.core.validators import MinValueValidator
+from django.db import transaction
+from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
-from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (FavoriteList, Ingredient,  # isort:skip
                             IngredientInRecipe, Recipe,
                             ShoppingCart, Subscription, Tag)
+from rest_framework import serializers  # isort:skip
+from rest_framework.validators import UniqueTogetherValidator  # isort:skip
 from users.models import CustomUser  # isort:skip
 from users.serializers import CurrentCustomUserSerializer  # isort:skip
+
+from backend.settings import (AMOUNT_INGREDIENT,  # isort:skip
+                              COOKING_TIME_RECIPE)
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -85,7 +91,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         """
         Метод `to_internal_value` возвращает валидированные данные.
         """
-        return Ingredient.objects.get(id=data)
+        return get_object_or_404(Ingredient, id=data)
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
@@ -95,7 +101,9 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     id = IngredientSerializer()
     name = serializers.CharField(required=False)
     measurement_unit = serializers.CharField(required=False)
-    amount = serializers.IntegerField()
+    amount = serializers.IntegerField(
+        validators=(MinValueValidator(AMOUNT_INGREDIENT),)
+    )
 
     class Meta:
         model = IngredientInRecipe
@@ -160,6 +168,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         method_name='get_is_in_shopping_cart'
     )
     image = Base64ImageField(required=False)
+    cooking_time = serializers.IntegerField(
+        validators=(MinValueValidator(COOKING_TIME_RECIPE),)
+    )
 
     class Meta:
         model = Recipe
@@ -174,12 +185,12 @@ class RecipeSerializer(serializers.ModelSerializer):
                   'text',
                   'cooking_time'
                   )
-        validators = [
+        validators = (
             UniqueTogetherValidator(
                 queryset=Recipe.objects.all(),
                 fields=('name', 'author')
-            )
-        ]
+            ),
+        )
 
     def get_is_favorited(self, obj):
         """
@@ -205,6 +216,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             user=request.user, recipe=obj
         ).exists()
 
+    @transaction.atomic
     def create(self, validated_data):
         """
         Метод `create` создает новый рецепт.
@@ -224,6 +236,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 amount=ingredient['amount'])
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         """
         Метод `update` редактирует рецепт.
@@ -329,7 +342,7 @@ class SubscribtionSerializer(serializers.ModelSerializer):
 class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = '__all__'
+        fields = ('id', 'user', 'author')
 
     def to_representation(self, instance):
         request = self.context.get('request')

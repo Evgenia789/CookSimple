@@ -1,28 +1,19 @@
 import os
-from datetime import timedelta
 from pathlib import Path
+
 from dotenv import load_dotenv
 
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(os.path.join(BASE_DIR, '.env'))
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 SECRET_KEY = os.getenv(
     'SECRET_KEY',
     default='8plrol*eov+2fbrt6eaxo($d#dvh@hmd4mcd5#f5n9dzckjfg!')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -72,12 +63,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'ENGINE': os.getenv(
+            'DB_ENGINE',
+            default='django.db.backends.postgresql'
+        ),
         'NAME': os.getenv('DB_NAME', default='postgres'),
         'USER': os.getenv('POSTGRES_USER', default='user'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='654qwe345'),
@@ -85,10 +76,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default=5432)
     }
 }
-#DATABASE_NAME = 'db.sqlite3'
 
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -107,9 +95,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# Internationalization
-# https://docs.djangoproject.com/en/2.2/topics/i18n/
-
 LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -120,9 +105,6 @@ USE_L10N = True
 
 USE_TZ = False
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -144,7 +126,7 @@ REST_FRAMEWORK = {
         'rest_framework.pagination.PageNumberPagination'
     ),
     'PAGE_SIZE': 6
-    
+
 }
 DJOSER = {
     'USER_ID_FIELD': 'id',
@@ -160,3 +142,8 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     }
 }
+
+COOKING_TIME_RECIPE = 1
+AMOUNT_INGREDIENT = 1
+CONTENT_TYPE = 'application/pdf'
+FILENAME = 'shopping_cart'

@@ -1,6 +1,6 @@
+import io
 from datetime import datetime
 
-from django.http import HttpResponse
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -12,11 +12,8 @@ def shopping_cart_pdf(data):
     Метод `shopping_cart_pdf` формирует pdf-файл с перечнем
     и количеством необходимых ингредиентов для рецептов из "Списка покупок".
     """
-    response = HttpResponse(content_type='application/pdf')
-    response[
-        'Content-Disposition'] = 'attachment; \
-    filename = "shopping_cart.pdf"'
-    sh = canvas.Canvas(response, pagesize=A4)
+    buffer = io.BytesIO()
+    sh = canvas.Canvas(buffer, pagesize=A4)
     pdfmetrics.registerFont(TTFont('Vela Sans', 'data/Vela Sans.ttf'))
     sh.setFillColorCMYK(0.4, 0, 0.4, 0.2)
     sh.setFont('Vela Sans', 16)
@@ -39,4 +36,5 @@ def shopping_cart_pdf(data):
         textobject.moveCursor(0, 2)
     sh.drawText(textobject)
     sh.save()
-    return response
+    buffer.seek(0)
+    return buffer

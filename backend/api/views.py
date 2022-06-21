@@ -1,14 +1,15 @@
 from http import HTTPStatus
 
 from django.db.models import Sum
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from api.filters import TagsFilter  # isort:skip
+from api.filters import IngredientFilter, TagsFilter  # isort:skip
 from api.pagination import RecipePagination  # isort:skip
 from api.permissions import AuthorOrReadOnly  # isort:skip
 from api.serializers import (IngredientSerializer,  # isort:skip
@@ -16,9 +17,10 @@ from api.serializers import (IngredientSerializer,  # isort:skip
                              SubscribtionSerializer,
                              SubscriptionRecipesSerializer, TagSerializer)
 from api.util import shopping_cart_pdf  # isort:skip
+from backend.settings import CONTENT_TYPE, FILENAME  # isort:skip
 from recipes.models import (FavoriteList, Ingredient,  # isort:skip
-                            IngredientInRecipe, Recipe, ShoppingCart,
-                            Subscription, Tag)
+                            IngredientInRecipe, Recipe,
+                            ShoppingCart, Subscription, Tag)
 from users.models import CustomUser  # isort:skip
 
 
@@ -27,10 +29,10 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     ViewSet для отображения списка или одного ингредиента.
     """
     queryset = Ingredient.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
     serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('^name',)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IngredientFilter
     pagination_class = None
 
 
@@ -39,7 +41,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     ViewSet для отображения списка или одного тега.
     """
     queryset = Tag.objects.all()
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
     serializer_class = TagSerializer
     pagination_class = None
 
@@ -52,9 +54,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [AuthorOrReadOnly]
+    permission_classes = (AuthorOrReadOnly,)
     pagination_class = RecipePagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = TagsFilter
 
     def perform_create(self, serializer):
@@ -104,10 +106,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
         для рецептов из "Списка покупок".
         """
         result = IngredientInRecipe.objects.filter(
-            recipe__shoppingcartrecipe__user=request.user).values(
-            'ingredient__name', 'ingredient__measurement_unit').order_by(
-                'ingredient__name').annotate(ingredient_total=Sum('amount'))
-        return shopping_cart_pdf(result)
+            recipe__shoppingcartrecipe__user=request.user
+        ).values(
+            'ingredient__name', 'ingredient__measurement_unit'
+        ).order_by(
+            'ingredient__name'
+        ).annotate(
+            ingredient_total=Sum('amount')
+        )
+        file = shopping_cart_pdf(result)
+        return FileResponse(
+            file,
+            content_type=CONTENT_TYPE,
+            as_attachment=True,
+            filename=FILENAME,
+            status=HTTPStatus.OK
+        )
 
     def add_recipe(self, model, request, pk):
         """
@@ -134,8 +148,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 user=request.user, recipe=recipe
             ).delete()
             return Response(status=HTTPStatus.NO_CONTENT)
-        else:
-            return Response(status=HTTPStatus.BAD_REQUEST)
+        return Response(status=HTTPStatus.BAD_REQUEST)
 
 
 class SubscribtionViewSet(viewsets.ModelViewSet):
@@ -143,7 +156,7 @@ class SubscribtionViewSet(viewsets.ModelViewSet):
     ViewSet для отображения списка подписок пользователя.
     """
     serializer_class = SubscribtionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         user = self.request.user
@@ -155,7 +168,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     ViewSet для создания или удаления подписки на автора рецепта.
     """
     serializer_class = SubscribeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
     def create(self, request, user_id):
         """
@@ -187,5 +200,4 @@ class SubscribeViewSet(viewsets.ModelViewSet):
                 user=request.user, author=author
             ).delete()
             return Response(status=HTTPStatus.NO_CONTENT)
-        else:
-            return Response(status=HTTPStatus.BAD_REQUEST)
+        return Response(status=HTTPStatus.BAD_REQUEST)
