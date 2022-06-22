@@ -9,8 +9,6 @@ services:
   backend:
     image: 83607rhfd/foodgram:v1.06.2022
     restart: always
-    expose:
-      - 8000
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
