@@ -22,6 +22,8 @@ services:
     image: 83607rhfd/frontend-foodgram:v1.06.2022
     volumes:
       - result_build:/app/result_build/build/
+    depends_on:
+      - backend
   nginx:
     image: nginx:1.19.3
     ports:
