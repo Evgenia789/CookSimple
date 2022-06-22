@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CustomUser
+from users.models import CustomUser  # isort:skip
 
 
 @admin.register(CustomUser)

@@ -17,7 +17,7 @@ from api.serializers import (IngredientSerializer,  # isort:skip
                              SubscribtionSerializer,
                              SubscriptionRecipesSerializer, TagSerializer)
 from api.util import shopping_cart_pdf  # isort:skip
-from backend.settings import CONTENT_TYPE, FILENAME  # isort:skip
+from backend.settings import FILENAME  # isort:skip
 from recipes.models import (FavoriteList, Ingredient,  # isort:skip
                             IngredientInRecipe, Recipe,
                             ShoppingCart, Subscription, Tag)
@@ -117,7 +117,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         file = shopping_cart_pdf(result)
         return FileResponse(
             file,
-            content_type=CONTENT_TYPE,
+            content_type='application/pdf',
             as_attachment=True,
             filename=FILENAME,
             status=HTTPStatus.OK
@@ -176,10 +176,6 @@ class SubscribeViewSet(viewsets.ModelViewSet):
         """
         author = get_object_or_404(CustomUser, id=user_id)
         user = self.request.user
-        if Subscription.objects.filter(
-            user=request.user, author=author
-        ).exists():
-            return Response(status=HTTPStatus.BAD_REQUEST)
         data = {'author': author.id, 'user': user.id}
         serializer = SubscribeSerializer(
             data=data, context={'request': request}

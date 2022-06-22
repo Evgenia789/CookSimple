@@ -5,6 +5,12 @@ from users.models import CustomUser  # isort:skip
 
 
 class IngredientFilter(filter.FilterSet):
+    """
+    Класс IngredientFilter для фильтрации списка ингредиентов при
+    поиске искомого ингредиента сначала по вхождению в начало
+    названия, затем по вхождению в произвольном месте. Результат
+    сортируется от первых ко вторым.
+    """
     name = filter.CharFilter(lookup_expr='istartswith')
 
     class Meta:

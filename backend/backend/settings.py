@@ -62,7 +62,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': os.getenv(
@@ -76,6 +76,14 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default=5432)
     }
 }
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+DATABASE_NAME = 'db.sqlite3'
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -145,5 +153,4 @@ DJOSER = {
 
 COOKING_TIME_RECIPE = 1
 AMOUNT_INGREDIENT = 1
-CONTENT_TYPE = 'application/pdf'
 FILENAME = 'shopping_cart'

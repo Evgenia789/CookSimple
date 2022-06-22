@@ -212,9 +212,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context['request']
         if request.user.is_anonymous:
             return False
-        return ShoppingCart.objects.filter(
+        if ShoppingCart.objects.filter(
             user=request.user, recipe=obj
-        ).exists()
+        ).exists():
+            return True
+        return False
 
     @transaction.atomic
     def create(self, validated_data):
@@ -242,8 +244,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         Метод `update` редактирует рецепт.
         """
         IngredientInRecipe.objects.filter(recipe=instance).delete()
-        tags = validated_data.pop("tags")
-        ingredients = validated_data.pop("ingredientinrecipe")
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredientinrecipe')
         instance.tags.set(tags)
         Recipe.objects.filter(pk=instance.pk).update(**validated_data)
         for ingredient in ingredients:
@@ -252,9 +254,9 @@ class RecipeSerializer(serializers.ModelSerializer):
                     'Количество ингредиента должно быть больше 0!'
                 )
             IngredientInRecipe.objects.create(
-                ingredient=ingredient["id"],
+                ingredient=ingredient['id'],
                 recipe=instance,
-                amount=ingredient["amount"],
+                amount=ingredient['amount'],
             )
         instance.refresh_from_db()
         return instance
@@ -293,14 +295,14 @@ class SubscribtionSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "is_subscribed",
-            "recipes",
-            "recipes_count",
+            'email',
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
         )
         model = Subscription
 
@@ -343,6 +345,12 @@ class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ('id', 'user', 'author')
+        validators = (
+            UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=('user', 'author')
+            ),
+        )
 
     def to_representation(self, instance):
         request = self.context.get('request')

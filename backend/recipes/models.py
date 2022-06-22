@@ -102,7 +102,7 @@ class Recipe(models.Model):
         default=1,
         validators=(MinValueValidator(COOKING_TIME_RECIPE),),
         verbose_name='Время приготовления (в минутах)',
-        help_text="Укажите время приготовления (в минутах)"
+        help_text='Укажите время приготовления (в минутах)'
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -113,7 +113,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ['-pub_date']
+        ordering = ('-pub_date',)
         constraints = (
             models.UniqueConstraint(
                 fields=('author', 'name'),

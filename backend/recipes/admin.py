@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from .models import (FavoriteList, Ingredient, IngredientInRecipe, Recipe,
-                     ShoppingCart, Subscription, Tag)
+from recipes.models import (FavoriteList, Ingredient,  # isort:skip
+                            IngredientInRecipe, Recipe,
+                            ShoppingCart, Subscription, Tag)
 
 
 class IngredientAdmin(admin.ModelAdmin):
@@ -46,7 +47,7 @@ class TagAdmin(admin.ModelAdmin):
     модели Tag в  интерфейсе админ-зоны.
     """
     list_display = ('name',)
-    prepopulated_fields = {"slug": ("name", )}
+    prepopulated_fields = {'slug': ('name', )}
     search_fields = ('name',)
 
 
