@@ -29,5 +29,5 @@ router.register(r'users/(?P<user_id>\d+)/subscribe',
 
 
 urlpatterns = [
-   path('', include(router.urls)),
+    path('', include(router.urls)),
 ]

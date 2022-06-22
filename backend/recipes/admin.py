@@ -75,7 +75,7 @@ class FavoriteListAdmin(admin.ModelAdmin):
         'user__username',
         'user__email',
         'recipe__name'
-        )
+    )
 
 
 class ShoppingCartAdmin(admin.ModelAdmin):
@@ -88,7 +88,7 @@ class ShoppingCartAdmin(admin.ModelAdmin):
         'user__username',
         'user__email',
         'recipe__name'
-        )
+    )
 
 
 class SubscriptionAdmin(admin.ModelAdmin):
@@ -100,7 +100,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     search_fields = (
         'user__username',
         'user__email'
-        )
+    )
 
 
 admin.site.register(Ingredient, IngredientAdmin)
