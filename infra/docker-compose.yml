@@ -20,9 +20,9 @@ services:
     env_file: 
       - ./.env
   frontend:
-    image: 83607rhfd/frontend-foodgram:v1.06.2022
+    image: 83607rhfd/frontend-foodgram:v1.06.2022  
     volumes:
-      - ../frontend/:/app/result_build/
+      - ../frontend/:/app/result_build/  
   nginx:
     image: nginx:1.19.3
     ports:
