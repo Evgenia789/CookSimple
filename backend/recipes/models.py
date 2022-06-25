@@ -33,10 +33,6 @@ class Tag(models.Model):
     """
     Класс Tag для добавления новых тэгов.
     """
-    COLOR_PALETTE = [
-        ("#FFFFFF", "white", ),
-        ("#000000", "black", ),
-    ]
     name = models.CharField(
         max_length=200,
         unique=True,
@@ -45,8 +41,7 @@ class Tag(models.Model):
     )
     colour = ColorField(
         max_length=7,
-        unique=True,
-        samples=COLOR_PALETTE,
+        blank=True,
         verbose_name='Цвет в HEX',
         help_text='Выберите цвет'
     )
