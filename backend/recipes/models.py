@@ -41,7 +41,7 @@ class Tag(models.Model):
     )
     colour = ColorField(
         max_length=7,
-        blank=True,
+        format='hex',
         verbose_name='Цвет в HEX',
         help_text='Выберите цвет'
     )

@@ -37,7 +37,7 @@ SECRET_KEY=<SECRET_KEY>
 
 Соберите контейнеры:
 ```bash
-    docker-compose up --build
+    docker-compose up -d --build 
 ```
 Выполните по очереди команды:
 ```bash
@@ -46,9 +46,6 @@ SECRET_KEY=<SECRET_KEY>
     docker-compose exec backend python manage.py add_ingredients
     docker-compose exec backend python manage.py createsuperuser
     docker-compose exec backend python manage.py collectstatic --no-input 
-```
-```bash
-    docker exec -it <CONTAINER_ID> bash
 ```
 ____
 Ваш проект запустился на http://84.252.143.228/
