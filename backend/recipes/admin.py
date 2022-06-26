@@ -82,7 +82,6 @@ class FavoriteListAdmin(admin.ModelAdmin):
     модели FavoriteList в интерфейсе админ-зоны.
     """
     list_display = ('user', 'recipe')
-    list_filter = ('user', 'recipe')
     search_fields = (
         'user__username',
         'user__email',
@@ -96,7 +95,6 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     модели ShoppingCart в интерфейсе админ-зоны.
     """
     list_display = ('user', 'recipe')
-    list_filter = ('user', 'recipe')
     search_fields = (
         'user__username',
         'user__email',
@@ -110,7 +108,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
     модели Subscription в интерфейсе админ-зоны.
     """
     list_display = ('user', 'author')
-    list_filter = ('user', 'author')
     search_fields = (
         'user__username',
         'user__email'
