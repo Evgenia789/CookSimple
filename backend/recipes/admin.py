@@ -5,13 +5,36 @@ from recipes.models import (FavoriteList, Ingredient,  # isort:skip
                             ShoppingCart, Subscription, Tag)
 
 
+class IngredientInRecipeInline(admin.TabularInline):
+    """
+    Класс IngredientInRecipeInline позволяет редактировать
+    модель IngredientInRecipe на той же странице, что и модель Recipe.
+    """
+    model = IngredientInRecipe
+    extra = 1
+
+
+class IngredientInRecipeAdmin(admin.ModelAdmin):
+    """
+    Класс IngredientInRecipeAdmin для редактирования
+    модели IngredientInRecipe в интерфейсе админ-зоны.
+    """
+    list_display = (
+        'recipe',
+        'ingredient',
+        'amount'
+    )
+    list_filter = ('recipe',)
+    list_display_links = ('recipe',)
+    search_fields = ('recipe__name', 'ingredient__name')
+
+
 class IngredientAdmin(admin.ModelAdmin):
     """
     Класс IngredientAdmin для редактирования
     модели Ingredient в  интерфейсе админ-зоны.
     """
     list_display = ('name', 'measurement_unit')
-    list_filter = ('name',)
     search_fields = ('name__istartswith', 'name__contains')
 
     def get_search_results(self, request, queryset, search_term):
@@ -29,8 +52,9 @@ class RecipeAdmin(admin.ModelAdmin):
     Класс RecipeAdmin для редактирования
     модели Recipe в  интерфейсе админ-зоны.
     """
-    list_display = ('author', 'name', 'count_favorite')
-    list_filter = ('author', 'name', 'tags')
+    inlines = (IngredientInRecipeInline,)
+    list_display = ('author', 'name', 'count_favorite', 'tags')
+    list_filter = ('author', 'tags')
     search_fields = ('name', 'author__username')
 
     def count_favorite(self, obj):
@@ -46,23 +70,10 @@ class TagAdmin(admin.ModelAdmin):
     Класс TagAdmin для редактирования
     модели Tag в  интерфейсе админ-зоны.
     """
-    list_display = ('name',)
+    list_display = ('name', 'colour')
+    list_editable = ('colour',)
     prepopulated_fields = {'slug': ('name', )}
     search_fields = ('name',)
-
-
-class IngredientInRecipeAdmin(admin.ModelAdmin):
-    """
-    Класс IngredientInRecipeAdmin для редактирования
-    модели IngredientInRecipe в интерфейсе админ-зоны.
-    """
-    list_display = (
-        'recipe',
-        'ingredient',
-        'amount'
-    )
-    list_display_links = ('recipe',)
-    search_fields = ('recipe__name', 'ingredient__name')
 
 
 class FavoriteListAdmin(admin.ModelAdmin):
@@ -71,6 +82,7 @@ class FavoriteListAdmin(admin.ModelAdmin):
     модели FavoriteList в интерфейсе админ-зоны.
     """
     list_display = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
     search_fields = (
         'user__username',
         'user__email',
@@ -84,6 +96,7 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     модели ShoppingCart в интерфейсе админ-зоны.
     """
     list_display = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
     search_fields = (
         'user__username',
         'user__email',
@@ -97,6 +110,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     модели Subscription в интерфейсе админ-зоны.
     """
     list_display = ('user', 'author')
+    list_filter = ('user', 'author')
     search_fields = (
         'user__username',
         'user__email'

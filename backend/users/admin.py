@@ -11,3 +11,4 @@ class CustomUserAdmin(admin.ModelAdmin):
     """
     list_dispaly = ('__all__',)
     list_filter = ('email', 'username')
+    search_fields = ('email', 'username')

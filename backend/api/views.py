@@ -162,6 +162,20 @@ class SubscribtionViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Subscription.objects.filter(user=user)
 
+    def delete(self, request, user_id=None):
+        """
+        Метод `delete` удаляет подписку на автора.
+        """
+        author = get_object_or_404(CustomUser, id=user_id)
+        if Subscription.objects.filter(
+            user=request.user, author=author
+        ).exists():
+            Subscription.objects.filter(
+                user=request.user, author=author
+            ).delete()
+            return Response(status=HTTPStatus.NO_CONTENT)
+        return Response(status=HTTPStatus.BAD_REQUEST)
+
 
 class SubscribeViewSet(viewsets.ModelViewSet):
     """
