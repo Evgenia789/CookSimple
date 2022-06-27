@@ -39,7 +39,7 @@ class Tag(models.Model):
         verbose_name='Название',
         help_text='Введите название тэга'
     )
-    colour = ColorField(
+    color = ColorField(
         unique=True,
         verbose_name='Цвет в HEX',
         help_text='Выберите цвет'

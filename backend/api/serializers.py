@@ -1,4 +1,3 @@
-import webcolors
 from django.core.validators import MinValueValidator
 from django.db import transaction
 from django.shortcuts import get_object_or_404
@@ -44,21 +43,6 @@ class AuthorSerializer(serializers.ModelSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return user.follower.filter(author=obj).exists()
-
-
-class Hex2NameColor(serializers.Field):
-    """
-    Сериализатор для конвертации кода цвета
-    в его название.
-    """
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        try:
-            return webcolors.hex_to_name(data)
-        except ValueError:
-            raise serializers.ValidationError('Для этого цвета нет имени')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -122,10 +106,8 @@ class TagSerializer(serializers.ModelSerializer):
     """
     Сериализатор TagSerializer для модели Tag.
     """
-    colour = Hex2NameColor()
-
     class Meta:
-        fields = ('id', 'name', 'colour', 'slug')
+        fields = ('id', 'name', 'color', 'slug')
         model = Tag
 
     def create(self, validated_data):
@@ -139,7 +121,7 @@ class TagSerializer(serializers.ModelSerializer):
         Метод `update` для редактирования тэга.
         """
         instance.name = validated_data.get('name', instance.name)
-        instance.colour = validated_data.get('colour', instance.colour)
+        instance.color = validated_data.get('color', instance.color)
         instance.slug = validated_data.get('slug', instance.slug)
         instance.save()
         return instance
@@ -281,7 +263,7 @@ class SubscribtionSerializer(serializers.ModelSerializer):
     Сериализатор SubscribtionSerializer для модели Subscribtion.
     """
     email = serializers.ReadOnlyField(source='author.email')
-    id = serializers.ReadOnlyField(source='following.id')
+    id = serializers.ReadOnlyField(source='author.id')
     username = serializers.ReadOnlyField(source='author.username')
     first_name = serializers.ReadOnlyField(source='author.first_name')
     last_name = serializers.ReadOnlyField(source='author.last_name')

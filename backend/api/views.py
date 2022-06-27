@@ -4,9 +4,8 @@ from django.db.models import Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import views, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -152,29 +151,30 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return Response(status=HTTPStatus.BAD_REQUEST)
 
 
-class SubscriptionViewSet(ListAPIView):
+class SubscriptionViewSet(viewsets.ModelViewSet):
     """
     ViewSet для отображения списка подписок пользователя.
     """
     serializer_class = SubscribtionSerializer
     permission_classes = (IsAuthenticated,)
+    pagination_class = RecipePagination
 
     def get_queryset(self):
         user = self.request.user
         return Subscription.objects.filter(user=user)
 
 
-class SubscribeView(views.APIView):
+class SubscribeViewSet(viewsets.ModelViewSet):
     """
     ViewSet для создания или удаления подписки на автора рецепта.
     """
     permission_classes = (IsAuthenticated,)
 
-    def create(self, request, user_id):
+    def create(self, request, id):
         """
         Метод `create` создает подписку на автора.
         """
-        author = get_object_or_404(CustomUser, id=user_id)
+        author = get_object_or_404(CustomUser, id=id)
         user = self.request.user
         data = {'author': author.id, 'user': user.id}
         serializer = SubscribeSerializer(
@@ -184,16 +184,14 @@ class SubscribeView(views.APIView):
         serializer.save()
         return Response(data=serializer.data, status=HTTPStatus.CREATED)
 
-    def delete(self, request, user_id=None):
+    def delete(self, request, id):
         """
         Метод `delete` удаляет подписку на автора.
         """
-        author = get_object_or_404(CustomUser, id=user_id)
-        if Subscription.objects.filter(
-            user=request.user, author=author
-        ).exists():
-            Subscription.objects.filter(
-                user=request.user, author=author
-            ).delete()
-            return Response(status=HTTPStatus.NO_CONTENT)
-        return Response(status=HTTPStatus.BAD_REQUEST)
+        author = get_object_or_404(CustomUser, id=id)
+        user = self.request.user
+        subscription = get_object_or_404(
+            Subscription, user=user, author=author
+        )
+        subscription.delete()
+        return Response(status=HTTPStatus.NO_CONTENT)

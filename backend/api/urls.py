@@ -18,10 +18,16 @@ router.register('tags',
                 views.TagViewSet,
                 basename='tag'
                 )
+router.register('users/subscriptions',
+                views.SubscriptionViewSet,
+                basename='subscription'
+                )
+router.register(r'users/(?P<id>\d+)/subscribe',
+                views.SubscribeViewSet,
+                basename='subscribe'
+                )
 
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/subscriptions/', views.SubscriptionViewSet.as_view()),
-    path('users/<int:pk>/subscribe/', views.SubscribeView.as_view())
 ]

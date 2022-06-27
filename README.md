@@ -48,4 +48,4 @@ SECRET_KEY=<SECRET_KEY>
     docker-compose exec backend python manage.py collectstatic --no-input 
 ```
 ____
-Ваш проект запустился на http://84.252.143.228/
+Ваш проект запустился на http://localhost/

@@ -53,7 +53,7 @@ class RecipeAdmin(admin.ModelAdmin):
     модели Recipe в  интерфейсе админ-зоны.
     """
     inlines = (IngredientInRecipeInline,)
-    list_display = ('author', 'name', 'count_favorite', 'tags')
+    list_display = ('author', 'name', 'count_favorite')
     list_filter = ('author', 'tags')
     search_fields = ('name', 'author__username')
 
@@ -70,8 +70,8 @@ class TagAdmin(admin.ModelAdmin):
     Класс TagAdmin для редактирования
     модели Tag в  интерфейсе админ-зоны.
     """
-    list_display = ('name', 'colour')
-    list_editable = ('colour',)
+    list_display = ('name', 'color')
+    list_editable = ('color',)
     prepopulated_fields = {'slug': ('name', )}
     search_fields = ('name',)
 
