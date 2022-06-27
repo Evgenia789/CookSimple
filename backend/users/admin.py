@@ -10,5 +10,4 @@ class CustomUserAdmin(admin.ModelAdmin):
     модели CustomUser в интерфейсе админ-зоны.
     """
     list_dispaly = ('__all__',)
-    list_filter = ('email', 'username')
     search_fields = ('email', 'username')

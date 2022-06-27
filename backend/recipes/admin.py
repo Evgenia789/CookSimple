@@ -24,7 +24,6 @@ class IngredientInRecipeAdmin(admin.ModelAdmin):
         'ingredient',
         'amount'
     )
-    list_filter = ('recipe',)
     list_display_links = ('recipe',)
     search_fields = ('recipe__name', 'ingredient__name')
 
