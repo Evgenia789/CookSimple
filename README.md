@@ -37,7 +37,6 @@ SECRET_KEY=<SECRET_KEY>
 ```
 
 Соберите контейнеры:
-
 ```bash
     docker-compose up -d --build 
 ```
