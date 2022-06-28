@@ -57,7 +57,7 @@ jobs:
         script: |
           sudo docker-compose stop
           sudo docker-compose rm backend
-          touch .env
+          sudo touch .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
           echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
@@ -66,6 +66,9 @@ jobs:
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
           echo DEBUG=${{ secrets.DEBUG }} >> .env
+          sudo chmod +x init-letsencrypt.sh
+          sudo ./init-letsencrypt.sh
+          sudo docker-compose up -d --build 
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
