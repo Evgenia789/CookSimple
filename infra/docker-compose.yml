@@ -18,6 +18,7 @@ services:
     env_file:
       - ./.env
   frontend:
+    tty: true
     image: 83607rhfd/frontend-foodgram:v1.06.2022
     volumes:
       - ../frontend/:/app/result_build/
