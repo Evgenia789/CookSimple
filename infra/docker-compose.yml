@@ -19,7 +19,6 @@ services:
       - ./.env
   frontend:
     image: 83607rhfd/frontend-foodgram:v1.06.2022
-    restart: "no"
     volumes:
       - ../frontend/:/app/result_build/
   nginx:
