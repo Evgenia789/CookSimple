@@ -1,6 +1,6 @@
-![example event parameter](https://github.com/Evgenia789/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?event=push)
+![example event parameter](https://github.com/Evgenia789/cook-simple/actions/workflows/foodgram_workflow.yml/badge.svg?event=push)
 # CookSimple
- Проект CookSimple позволяет пользователем публиковать свои рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
+СookSimple - это удобный сервис, который позволяет вам без особых усилий публиковать ваши любимые рецепты, легко добавлять их в свой личный список избранного, подписываться на рецепты других пользователей и даже создавать список покупок на основе выбранных вами рецептов.
 
 ## Cтек технологий
 
